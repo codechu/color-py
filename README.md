@@ -14,12 +14,18 @@
 
 # codechu-color
 
-Stdlib-only color palettes and format converters for Python 3.10+.
-Zero runtime dependencies.
+One source of truth for color across surfaces. CLI tools want ANSI
+escapes, GTK / web apps want hex and CSS, JSON exports want flat
+dicts, accessibility audits want WCAG contrast and color-blind-safe
+variants. `codechu-color` keeps the palette in one place and derives
+every form.
 
-Solves the cross-surface palette drift problem: CLI tools work in
-ANSI escapes, GTK apps work in hex / CSS, JSON exports want flat
-dicts. `codechu-color` keeps one source of truth and derives the rest.
+```text
+        default      protanopia    deuteranopia   tritanopia
+low     ▓ #1a7f37    ▓ #117733     ▓ #009e73      ▓ #44aa99
+med     ▓ #9a6700    ▓ #cc6677     ▓ #e69f00      ▓ #ddcc77
+high    ▓ #cf222e    ▓ #882255     ▓ #d55e00      ▓ #cc6677
+```
 
 ## Install
 
@@ -27,94 +33,74 @@ dicts. `codechu-color` keeps one source of truth and derives the rest.
 pip install codechu-color
 ```
 
-## Quick start
+Python 3.10+. Zero third-party dependencies.
+
+## Quick example
 
 ```python
-from codechu_color import Color, Palette, RISK, palette_for, to_gtk_css
+from codechu_color import Color, RISK, palette_for, contrast_ratio, to_gtk_css
 
-# Single color in every form
+# One color, every form
 green = Color.from_hex("#1a7f37", name="low")
 green.rgb       # (26, 127, 55)
 green.ansi_fg   # "\x1b[32m"
-green.ansi_bg   # "\x1b[42m"
 
 # Built-in semantic palette (GitHub accessibility-tuned)
-RISK.low.hex    # "#1a7f37"
 RISK.high.hex   # "#cf222e"
 
-# Color-blind safe variants (Bang & Wong 2011)
+# Color-blind safe variant
 pal = palette_for("risk", profile="deuteranopia")
 pal.high.hex    # "#d55e00" (vermilion, safe for red-green confusion)
 
 # Export for GTK CSS
-css = to_gtk_css(RISK, prefix="risk-")
-# .risk-low { color: #1a7f37; } ...
+to_gtk_css(RISK, prefix="risk-")
 
-# Flat dict for JSON
-RISK.to_dict()  # {"low": "#1a7f37", "medium": "#9a6700", "high": "#cf222e"}
+# WCAG helpers
+contrast_ratio((255, 255, 255), (0, 0, 0))   # 21.0 (max)
 ```
 
-## WCAG helpers
+## What you get
 
-```python
-from codechu_color import contrast_ratio, pick_text_color
+- **`Color`** — single color with `.rgb`, `.hex`, `.ansi_fg`,
+  `.ansi_bg` views and `.from_hex` / `.from_rgb` constructors.
+- **Built-in palettes** — `RISK` (low/medium/high, GitHub-tuned),
+  `TERMINAL` (ANSI 8), `MATERIAL`, `SOLARIZED_LIGHT` /
+  `SOLARIZED_DARK`.
+- **Color-blind safe variants** — `palette_for(name, profile=…)`
+  with `default` / `protanopia` / `deuteranopia` / `tritanopia`,
+  using the Bang & Wong (2011) qualitative palette.
+- **WCAG helpers** — `contrast_ratio()`, `pick_text_color()` for
+  picking readable foreground over an arbitrary background.
+- **Export helpers** — `to_gtk_css(palette, prefix=…)`,
+  `palette.to_dict()` for JSON.
 
-contrast_ratio((255, 255, 255), (0, 0, 0))   # 21.0  (max)
-pick_text_color((9, 105, 218))                # (255, 255, 255) — white on blue
-```
+## Read more
 
-## Built-in palettes
+- [API reference](docs/API.md) — every public symbol with
+  signatures and edge-case tables.
+- [Changelog](CHANGELOG.md)
 
-| name | keys |
-|---|---|
-| `RISK` | `low`, `medium`, `high` |
-| `TERMINAL` | basic ANSI 8 |
-| `MATERIAL` | Material Design Primary 500 tones |
-| `SOLARIZED_LIGHT` / `SOLARIZED_DARK` | full accent ramp + base tones |
-
-## Vision profiles
-
-`palette_for("risk", profile=...)` accepts:
-
-- `"default"` — GitHub semantic green / amber / red
-- `"protanopia"` — safe for protan red-blindness
-- `"deuteranopia"` — safe for deutan red-green confusion (most common)
-- `"tritanopia"` — safe for tritan blue-yellow confusion
-
-Profiles use the Bang & Wong (2011) qualitative palette
-(*Nature Methods* 8: 441).
-
-## Documentation
-
-- [API reference](docs/API.md) — every public symbol, signatures, edge cases
-
-## Codechu family
-
-Companion libraries from the Codechu Python ecosystem:
+## Family
 
 | Library | Purpose |
 |---------|---------|
-| [codechu-fmt](https://pypi.org/project/codechu-fmt/) | Human-readable formatting — sizes, durations, rates, percent |
-| [codechu-meter](https://pypi.org/project/codechu-meter/) | Timing primitives — Stopwatch, ETA, percentile, histogram |
+| [codechu-cli](https://pypi.org/project/codechu-cli/) | CLI primitives — colors, progress, prompts |
+| [codechu-term](https://pypi.org/project/codechu-term/) | Terminal capabilities, alt buffer, raw mode |
 | [codechu-spark](https://pypi.org/project/codechu-spark/) | Unicode sparklines, mini bar charts, heatmaps |
-| [codechu-cli](https://pypi.org/project/codechu-cli/) | CLI primitives — colors, progress, spinners, prompts, table |
-| [codechu-events](https://pypi.org/project/codechu-events/) | Thread-safe multi-channel pub/sub bus with replay |
-| [codechu-xdg](https://pypi.org/project/codechu-xdg/) | XDG Base Directory helpers, vendor-namespaced |
-| [codechu-treeviz](https://pypi.org/project/codechu-treeviz/) | Tree visualization — treemap, sunburst, icicle, flame |
-| [codechu-fs](https://pypi.org/project/codechu-fs/) | Filesystem primitives — atomic write, XDG trash, safe walk |
-| [codechu-term](https://pypi.org/project/codechu-term/) | Terminal capability detection, alt buffer, raw mode |
-| [codechu-treedata](https://pypi.org/project/codechu-treedata/) | N-ary tree data structures and algorithms |
-| [codechu-log](https://pypi.org/project/codechu-log/) | Structured logging — context, JSON, rotation, redaction |
-| [codechu-i18n](https://pypi.org/project/codechu-i18n/) | Internationalization — locale, plural rules, RTL |
-| [codechu-ipc](https://pypi.org/project/codechu-ipc/) | Local IPC — Unix socket, FIFO, JSON-line protocol |
-| [codechu-config](https://pypi.org/project/codechu-config/) | Schema-driven config — atomic save, migrations |
+| [codechu-fmt](https://pypi.org/project/codechu-fmt/) | Human-readable sizes, durations, rates |
+| [codechu-treeviz](https://pypi.org/project/codechu-treeviz/) | Treemap + sunburst layouts |
+
+Full ecosystem: [github.com/codechu](https://github.com/codechu).
 
 ## Credits
 
-- Color-blind safe palettes based on Bang & Wong (2011), *Nature Methods* 8:441
-- Risk semantic colors match GitHub's accessibility-tuned palette
-- WCAG contrast ratio formula from W3C WCAG 2.1 guidelines
+- Color-blind safe palettes based on Bang & Wong (2011),
+  *Nature Methods* 8:441.
+- Risk semantic colors match GitHub's accessibility-tuned palette.
+- WCAG contrast ratio formula from W3C WCAG 2.1 guidelines.
 
 ## License
 
-MIT
+MIT — see [LICENSE](LICENSE).
+
+Part of [Codechu](https://github.com/codechu).
