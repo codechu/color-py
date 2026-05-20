@@ -1,3 +1,12 @@
+```text
+   c o d e c h u  ·  c o l o r
+   ███  ▓▓▓  ▒▒▒  ░░░    #1a7f37   #9a6700   #cf222e
+   ░░░  ▒▒▒  ▓▓▓  ███    rgb · hex · ansi · gtk-css
+   ── one palette. every surface. every eye. ──
+```
+
+> *Stdlib-only color palettes, conversions, and WCAG helpers — colour-blind safe variants included.*
+
 # codechu-color
 
 Stdlib-only color palettes and format converters for Python 3.10+.
