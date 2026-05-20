@@ -1,8 +1,14 @@
 ```text
-   c o d e c h u  ·  c o l o r
-   ███  ▓▓▓  ▒▒▒  ░░░    #1a7f37   #9a6700   #cf222e
-   ░░░  ▒▒▒  ▓▓▓  ███    rgb · hex · ansi · gtk-css
-   ── one palette. every surface. every eye. ──
+━━━━━━━━━━━ c o d e c h u  ·  c o l o r ━━━━━━━━━━━
+
+           default     protanopia   deuteranopia  tritanopia
+   low     ▓ #1a7f37   ▓ #117733    ▓ #009e73     ▓ #44aa99
+   med     ▓ #9a6700   ▓ #cc6677    ▓ #e69f00     ▓ #ddcc77
+   high    ▓ #cf222e   ▓ #882255    ▓ #d55e00     ▓ #cc6677
+
+       rgb  ·  hex  ·  ansi  ·  gtk-css  ·  WCAG contrast
+
+━━━ one palette. every surface. every eye. ━━━
 ```
 
 [![PyPI](https://img.shields.io/pypi/v/codechu-color.svg)](https://pypi.org/project/codechu-color/)
@@ -19,13 +25,6 @@ escapes, GTK / web apps want hex and CSS, JSON exports want flat
 dicts, accessibility audits want WCAG contrast and color-blind-safe
 variants. `codechu-color` keeps the palette in one place and derives
 every form.
-
-```text
-        default      protanopia    deuteranopia   tritanopia
-low     ▓ #1a7f37    ▓ #117733     ▓ #009e73      ▓ #44aa99
-med     ▓ #9a6700    ▓ #cc6677     ▓ #e69f00      ▓ #ddcc77
-high    ▓ #cf222e    ▓ #882255     ▓ #d55e00      ▓ #cc6677
-```
 
 ## Install
 
